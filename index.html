@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Timer Tools · 4 in 1 Pro </title>
-  <link rel="icon" type="image/x-icon" href="clock.png"> 
+  <title>Timer Tools · 4 in 1 Pro</title>
+  <link rel="icon" type="image/x-icon" href="clock.png">
   <style>
     * {
       margin: 0;
@@ -15,7 +14,7 @@
     }
     html, body {
       height: 100%;
-      overflow: hidden; /* No scroll on desktop or mobile */
+      overflow: hidden;
     }
     body {
       background: radial-gradient(circle at 20% 30%, #141e33, #0a0f1a);
@@ -53,6 +52,7 @@
       justify-content: center;
       min-height: 0;
       height: 100%;
+      position: relative;
     }
     .card:hover {
       border-color: rgba(120, 180, 255, 0.12);
@@ -89,6 +89,69 @@
       margin-bottom: 0.6rem;
       border: 1px solid rgba(255, 255, 255, 0.02);
       flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+    /* timer ring wrapper */
+    .timer-ring-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .timer-ring-container {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin: 0.2rem auto;
+    }
+    .timer-ring-container canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 50%;
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+    #timerRingCanvas {
+      z-index: 1;
+    }
+    #timerDisplay {
+      position: relative;
+      z-index: 3;
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      font-size: 2.2rem;
+      padding: 0;
+      margin: 0;
+      width: auto;
+      display: inline-block;
+      backdrop-filter: none;
+      background: transparent;
+      text-shadow: 0 0 20px rgba(70, 140, 255, 0.4);
+      line-height: 1.2;
+    }
+    .timer-ring-container .time-display {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      font-size: 2rem;
+      padding: 0;
+      margin: 0;
+      width: auto;
+      backdrop-filter: none;
+      text-shadow: 0 0 20px rgba(70, 140, 255, 0.5);
     }
     .controls {
       display: flex;
@@ -98,6 +161,8 @@
       margin: 0.3rem 0 0.2rem;
       width: 100%;
       flex-shrink: 0;
+      position: relative;
+      z-index: 5;
     }
     .controls button {
       background: rgba(50, 80, 140, 0.2);
@@ -166,6 +231,8 @@
       justify-content: center;
       align-items: center;
       flex-shrink: 0;
+      position: relative;
+      z-index: 5;
     }
     .custom-timer-row input {
       background: rgba(0, 0, 0, 0.4);
@@ -213,7 +280,28 @@
     }
     .preset-click:hover { color: #c8ddff; text-shadow: 0 0 8px rgba(100,180,255,0.3); }
 
-    /* RESPONSIVE: mobile → single column, still no scroll */
+    /* digital clock with AM/PM */
+    #digitalDisplay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+    }
+    .ampm-badge {
+      font-size: 1.2rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      background: rgba(255,255,255,0.03);
+      padding: 0.1rem 0.7rem;
+      border-radius: 3rem;
+      border: 1px solid rgba(255,255,255,0.04);
+      color: #9bb7e6;
+      text-shadow: 0 0 10px rgba(70,140,255,0.15);
+      margin-left: 0.2rem;
+      opacity: 0.8;
+    }
+
     @media (max-width: 750px) {
       .dashboard {
         grid-template-columns: 1fr;
@@ -226,21 +314,29 @@
       .time-display { font-size: 2.4rem; }
       canvas { width: 130px; height: 130px; }
       .card { padding: 1rem 0.8rem 1.2rem; }
+      .timer-ring-container { width: 110px; height: 110px; }
+      .ampm-badge { font-size: 1rem; padding: 0.1rem 0.5rem; }
     }
-    /* For very large screens, keep proportions */
     @media (min-width: 1200px) {
       .dashboard { max-width: 1150px; max-height: 750px; }
       .time-display { font-size: 3rem; }
       canvas { width: 180px; height: 180px; }
+      .timer-ring-container { width: 160px; height: 160px; }
+      .ampm-badge { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body>
 <div class="dashboard">
-  <!-- TIMER -->
+  <!-- TIMER with progress ring -->
   <div class="card">
     <h3>⏳ Timer</h3>
-    <div class="time-display" id="timerDisplay">00:00</div>
+    <div class="timer-ring-wrapper">
+      <div class="timer-ring-container">
+        <canvas id="timerRingCanvas" width="300" height="300"></canvas>
+        <div class="time-display" id="timerDisplay">00:00</div>
+      </div>
+    </div>
     <div class="controls">
       <button id="timerStartBtn">▶ Start</button>
       <button id="timerPauseBtn">⏸ Pause</button>
@@ -269,10 +365,13 @@
     <div class="sub-label">precision 0.1s · lap</div>
   </div>
 
-  <!-- DIGITAL CLOCK -->
+  <!-- DIGITAL CLOCK with AM/PM -->
   <div class="card">
     <h3>🕒 Digital</h3>
-    <div class="time-display" id="digitalDisplay">--:--:--</div>
+    <div class="time-display" id="digitalDisplay">
+      <span id="digitalTime">--:--:--</span>
+      <span class="ampm-badge" id="ampmBadge">--</span>
+    </div>
     <div class="sub-label" id="dateDisplay" style="margin-top:0.2rem;">📅 loading...</div>
   </div>
 
@@ -290,17 +389,63 @@
   (function() {
     "use strict";
 
-    // ---------- TIMER ----------
+    // ---------- TIMER WITH PROGRESS RING ----------
     let timerSeconds = 0;
+    let timerMaxSeconds = 10;
     let timerInterval = null;
     let timerRunning = false;
     const timerDisplay = document.getElementById('timerDisplay');
     const customInput = document.getElementById('customTimerInput');
+    const ringCanvas = document.getElementById('timerRingCanvas');
+    const ringCtx = ringCanvas.getContext('2d');
+
+    function drawTimerRing(seconds, maxSeconds) {
+      const w = ringCanvas.width, h = ringCanvas.height;
+      const centerX = w/2, centerY = h/2;
+      const radius = Math.min(w, h) * 0.42;
+      const lineWidth = 12;
+
+      ringCtx.clearRect(0, 0, w, h);
+
+      ringCtx.beginPath();
+      ringCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ringCtx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ringCtx.lineWidth = lineWidth;
+      ringCtx.stroke();
+
+      const progress = maxSeconds > 0 ? Math.min(1, seconds / maxSeconds) : 0;
+      const startAngle = -Math.PI / 2;
+      const endAngle = startAngle + (progress * 2 * Math.PI);
+
+      const grad = ringCtx.createConicGradient(startAngle, centerX, centerY);
+      grad.addColorStop(0, '#4a8eff');
+      grad.addColorStop(0.5, '#9f7aff');
+      grad.addColorStop(1, '#ff7a9e');
+
+      ringCtx.beginPath();
+      ringCtx.arc(centerX, centerY, radius, startAngle, endAngle);
+      ringCtx.strokeStyle = grad;
+      ringCtx.lineWidth = lineWidth;
+      ringCtx.lineCap = 'round';
+      ringCtx.shadowColor = 'rgba(100,160,255,0.25)';
+      ringCtx.shadowBlur = 20;
+      ringCtx.stroke();
+      ringCtx.shadowBlur = 0;
+
+      ringCtx.beginPath();
+      ringCtx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
+      ringCtx.fillStyle = '#b0ceff';
+      ringCtx.shadowBlur = 15;
+      ringCtx.shadowColor = '#3a7bd5';
+      ringCtx.fill();
+      ringCtx.shadowBlur = 0;
+    }
 
     function updateTimerDisplay() {
       const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
       const s = String(timerSeconds % 60).padStart(2, '0');
       timerDisplay.textContent = `${m}:${s}`;
+      drawTimerRing(timerSeconds, timerMaxSeconds);
     }
 
     function timerTick() {
@@ -318,20 +463,37 @@
         clearInterval(timerInterval);
         timerInterval = null;
         timerRunning = false;
+        drawTimerRing(0, timerMaxSeconds);
       }
     }
 
     function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } timerRunning = false; }
     function startTimer() {
       if (timerRunning) return;
-      if (timerSeconds <= 0) { timerSeconds = 10; updateTimerDisplay(); }
+      if (timerSeconds <= 0) { 
+        timerSeconds = Math.max(1, timerMaxSeconds); 
+        updateTimerDisplay();
+      }
       stopTimer();
       timerInterval = setInterval(timerTick, 1000);
       timerRunning = true;
     }
     function pauseTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } timerRunning = false; }
-    function resetTimer() { pauseTimer(); timerSeconds = 0; updateTimerDisplay(); }
-    function setTimer(seconds) { pauseTimer(); timerSeconds = Math.max(0, seconds); updateTimerDisplay(); }
+    function resetTimer() { 
+      pauseTimer(); 
+      timerSeconds = 0; 
+      timerMaxSeconds = 10; 
+      customInput.value = 10;
+      updateTimerDisplay(); 
+    }
+    function setTimer(seconds) { 
+      pauseTimer(); 
+      const val = Math.max(0, seconds);
+      timerSeconds = val;
+      timerMaxSeconds = val || 1;
+      customInput.value = val;
+      updateTimerDisplay(); 
+    }
 
     document.getElementById('timerStartBtn').addEventListener('click', startTimer);
     document.getElementById('timerPauseBtn').addEventListener('click', pauseTimer);
@@ -343,9 +505,9 @@
       customInput.value = val;
       setTimer(val);
     });
-    document.getElementById('preset5').addEventListener('click', ()=> setTimer(5));
-    document.getElementById('preset30').addEventListener('click', ()=> setTimer(30));
-    document.getElementById('preset60').addEventListener('click', ()=> setTimer(60));
+    document.getElementById('preset5').addEventListener('click', ()=> { setTimer(5); });
+    document.getElementById('preset30').addEventListener('click', ()=> { setTimer(30); });
+    document.getElementById('preset60').addEventListener('click', ()=> { setTimer(60); });
 
     // ---------- STOPWATCH ----------
     let swSeconds = 0;
@@ -370,21 +532,27 @@
     document.getElementById('stopwatchPauseBtn').addEventListener('click', pauseSw);
     document.getElementById('stopwatchResetBtn').addEventListener('click', resetSw);
 
-    // ---------- DIGITAL CLOCK ----------
-    const digitalDisplay = document.getElementById('digitalDisplay');
+    // ---------- DIGITAL CLOCK with AM/PM ----------
+    const digitalTime = document.getElementById('digitalTime');
+    const ampmBadge = document.getElementById('ampmBadge');
     const dateDisplay = document.getElementById('dateDisplay');
+
     function updateDigitalClock() {
       const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      digitalDisplay.textContent = `${h}:${m}:${s}`;
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const h12 = hours % 12 || 12;
+      const hStr = String(h12).padStart(2, '0');
+      digitalTime.textContent = `${hStr}:${minutes}:${seconds}`;
+      ampmBadge.textContent = ampm;
       dateDisplay.textContent = now.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
     }
     updateDigitalClock();
     setInterval(updateDigitalClock, 1000);
 
-    // ---------- ANALOG CLOCK (with numbers) ----------
+    // ---------- ANALOG CLOCK ----------
     const canvas = document.getElementById('analogCanvas');
     const ctx = canvas.getContext('2d');
     const analogLabel = document.getElementById('analogLabel');
@@ -401,7 +569,6 @@
 
       ctx.clearRect(0, 0, w, h);
 
-      // background
       const grad = ctx.createRadialGradient(centerX-12, centerY-12, 10, centerX, centerY, radius*1.2);
       grad.addColorStop(0, '#253453');
       grad.addColorStop(0.9, '#0a1120');
@@ -413,14 +580,12 @@
       ctx.fill();
       ctx.shadowBlur = 0;
 
-      // outer ring
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
       ctx.strokeStyle = '#9bb7e6';
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // -------- NUMBERS (1-12) --------
       ctx.fillStyle = '#dbeafe';
       ctx.font = `bold ${radius * 0.16}px 'Inter', 'Segoe UI', system-ui, sans-serif`;
       ctx.textAlign = 'center';
@@ -437,7 +602,6 @@
       }
       ctx.shadowBlur = 0;
 
-      // minute ticks
       for (let i = 0; i < 60; i++) {
         if (i % 5 === 0) continue;
         const angle = (i / 60) * 2 * Math.PI - Math.PI/2;
@@ -450,8 +614,6 @@
         ctx.lineWidth = 1.2;
         ctx.stroke();
       }
-
-      // hour marks (thick)
       for (let i = 0; i < 12; i++) {
         const angle = (i / 12) * 2 * Math.PI - Math.PI/2;
         const inner = radius * 0.85;
@@ -464,28 +626,24 @@
         ctx.stroke();
       }
 
-      // hands
       const hourAngle = (hours + minutes/60) * (Math.PI/6) - Math.PI/2;
       const minAngle = (minutes + seconds/60) * (Math.PI/30) - Math.PI/2;
       const secAngle = seconds * (Math.PI/30) - Math.PI/2;
 
       ctx.shadowColor = 'rgba(60,120,220,0.3)';
       ctx.shadowBlur = 18;
-      // hour
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(centerX + Math.cos(hourAngle)*radius*0.5, centerY + Math.sin(hourAngle)*radius*0.5);
       ctx.strokeStyle = '#eaf2ff';
       ctx.lineWidth = 5;
       ctx.stroke();
-      // minute
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(centerX + Math.cos(minAngle)*radius*0.7, centerY + Math.sin(minAngle)*radius*0.7);
       ctx.strokeStyle = '#c2d9ff';
       ctx.lineWidth = 3.2;
       ctx.stroke();
-      // second
       ctx.shadowColor = '#ff8855';
       ctx.shadowBlur = 16;
       ctx.beginPath();
@@ -496,7 +654,6 @@
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // center dot
       ctx.beginPath();
       ctx.arc(centerX, centerY, 7, 0, 2*Math.PI);
       ctx.fillStyle = '#dbeafe';
@@ -509,16 +666,21 @@
       ctx.fillStyle = '#0b1120';
       ctx.fill();
 
-      analogLabel.textContent = `🕐 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      analogLabel.textContent = `🕐 ${hh}:${mm}`;
     }
 
     drawAnalogClock();
     setInterval(drawAnalogClock, 1000);
 
-    // initial display
+    // init timer
+    timerMaxSeconds = 10;
+    timerSeconds = 0;
     updateTimerDisplay();
     updateStopwatchDisplay();
     customInput.value = 10;
+    drawTimerRing(0, 10);
   })();
 </script>
 </body>
