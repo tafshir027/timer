@@ -11,97 +11,107 @@
       box-sizing: border-box;
       font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
+    html, body {
+      height: 100%;
+      overflow: hidden; /* No scroll on desktop or mobile */
+    }
     body {
-      min-height: 100vh;
       background: radial-gradient(circle at 20% 30%, #141e33, #0a0f1a);
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 2rem 1.5rem;
+      padding: 1.5rem;
     }
     .dashboard {
-      max-width: 1280px;
+      max-width: 1100px;
       width: 100%;
+      height: 100%;
+      max-height: 700px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
       background: rgba(255, 255, 255, 0.02);
       backdrop-filter: blur(2px);
-      padding: 2rem;
-      border-radius: 4rem;
+      padding: 1.8rem;
+      border-radius: 3.5rem;
       box-shadow: 0 30px 60px -10px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.04);
       border: 1px solid rgba(255, 255, 255, 0.02);
     }
     .card {
       background: rgba(14, 22, 40, 0.65);
       backdrop-filter: blur(12px);
-      border-radius: 2.8rem;
-      padding: 1.8rem 1.5rem 2rem;
+      border-radius: 2.5rem;
+      padding: 1.4rem 1.2rem 1.6rem;
       box-shadow: 0 20px 40px -12px #000000aa, inset 0 0 0 1px rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.02);
       transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      min-height: 0;
+      height: 100%;
     }
     .card:hover {
       border-color: rgba(120, 180, 255, 0.12);
-      transform: translateY(-6px);
+      transform: translateY(-4px);
       box-shadow: 0 30px 50px -14px #000000cc;
     }
     .card h3 {
       color: #b8cef0;
       font-weight: 500;
       letter-spacing: 2px;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      margin-bottom: 1.4rem;
+      margin-bottom: 0.8rem;
       opacity: 0.7;
       border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      padding-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
       width: 100%;
       text-align: center;
+      flex-shrink: 0;
     }
     .time-display {
-      font-size: 3.4rem;
+      font-size: 2.6rem;
       font-weight: 500;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       color: #f0f7ff;
       text-shadow: 0 0 20px rgba(70, 140, 255, 0.2);
       background: rgba(0, 0, 0, 0.35);
-      padding: 0.4rem 1rem;
-      border-radius: 3rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 2.5rem;
       width: 100%;
       text-align: center;
       font-variant-numeric: tabular-nums;
       box-shadow: inset 0 6px 12px rgba(0,0,0,0.6);
-      margin-bottom: 1rem;
+      margin-bottom: 0.6rem;
       border: 1px solid rgba(255, 255, 255, 0.02);
-      transition: 0.15s;
+      flex-shrink: 0;
     }
     .controls {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.6rem;
-      margin: 0.5rem 0 0.3rem;
+      gap: 0.4rem;
+      margin: 0.3rem 0 0.2rem;
       width: 100%;
+      flex-shrink: 0;
     }
     .controls button {
       background: rgba(50, 80, 140, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.04);
       color: #d6e6ff;
-      padding: 0.5rem 1.2rem;
-      border-radius: 3rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 2.5rem;
       font-weight: 500;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       letter-spacing: 0.4px;
       backdrop-filter: blur(4px);
       cursor: pointer;
       transition: 0.15s ease;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       flex: 1 0 auto;
-      min-width: 60px;
+      min-width: 50px;
     }
     .controls button:hover {
       background: rgba(70, 130, 230, 0.3);
@@ -119,47 +129,51 @@
       border-color: rgba(255, 130, 130, 0.2);
     }
     .sub-label {
-      font-size: 0.7rem;
+      font-size: 0.6rem;
       color: #6d89b8;
       letter-spacing: 1px;
-      margin-top: 0.3rem;
+      margin-top: 0.2rem;
       opacity: 0.6;
+      flex-shrink: 0;
     }
     .clock-container {
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
-      margin: 0.2rem 0 0.2rem;
+      flex: 1 1 auto;
+      min-height: 0;
+      margin: 0.1rem 0;
     }
     canvas {
       background: radial-gradient(circle at 30% 25%, #1f2d4a, #0a1120);
       border-radius: 50%;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
       display: block;
-      width: 180px;
-      height: 180px;
+      width: 150px;
+      height: 150px;
       max-width: 100%;
       aspect-ratio: 1/1;
       border: 2px solid rgba(255, 255, 255, 0.02);
     }
     .custom-timer-row {
       display: flex;
-      gap: 0.5rem;
-      margin: 0.6rem 0 0.2rem;
+      gap: 0.4rem;
+      margin: 0.3rem 0 0.1rem;
       width: 100%;
       justify-content: center;
       align-items: center;
+      flex-shrink: 0;
     }
     .custom-timer-row input {
       background: rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: #e0edff;
-      padding: 0.5rem 0.8rem;
-      border-radius: 2.5rem;
-      width: 90px;
+      padding: 0.3rem 0.6rem;
+      border-radius: 2rem;
+      width: 70px;
       text-align: center;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 400;
       outline: none;
       transition: 0.15s;
@@ -173,9 +187,9 @@
       background: rgba(50, 130, 220, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.04);
       color: #c8ddff;
-      padding: 0.5rem 1.2rem;
-      border-radius: 3rem;
-      font-size: 0.8rem;
+      padding: 0.3rem 1rem;
+      border-radius: 2.5rem;
+      font-size: 0.7rem;
       font-weight: 500;
       cursor: pointer;
       transition: 0.15s;
@@ -187,11 +201,35 @@
       border-color: rgba(160, 200, 255, 0.2);
       color: white;
     }
-    .flex-row { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; justify-content: center; }
-    #analogLabel { font-size: 0.7rem; color: #7b98cc; margin-top: 0.2rem; }
-    @media (max-width: 700px) {
-      .dashboard { grid-template-columns: 1fr; padding: 1rem; gap: 1.5rem; }
-      .time-display { font-size: 2.8rem; }
+    #analogLabel { font-size: 0.6rem; color: #7b98cc; margin-top: 0.1rem; flex-shrink: 0; }
+    .preset-click {
+      cursor: pointer;
+      color: #9bb9f0;
+      margin: 0 3px;
+      font-weight: 500;
+      transition: 0.1s;
+    }
+    .preset-click:hover { color: #c8ddff; text-shadow: 0 0 8px rgba(100,180,255,0.3); }
+
+    /* RESPONSIVE: mobile → single column, still no scroll */
+    @media (max-width: 750px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        max-height: 100vh;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 2.5rem;
+      }
+      body { padding: 0.8rem; }
+      .time-display { font-size: 2.4rem; }
+      canvas { width: 130px; height: 130px; }
+      .card { padding: 1rem 0.8rem 1.2rem; }
+    }
+    /* For very large screens, keep proportions */
+    @media (min-width: 1200px) {
+      .dashboard { max-width: 1150px; max-height: 750px; }
+      .time-display { font-size: 3rem; }
+      canvas { width: 180px; height: 180px; }
     }
   </style>
 </head>
@@ -210,10 +248,10 @@
       <input type="number" id="customTimerInput" value="10" min="1" max="3600" step="1">
       <button id="setCustomTimerBtn">Set</button>
     </div>
-    <div class="sub-label">presets: 
-      <span style="cursor:pointer;color:#9bb9f0;margin:0 4px;" id="preset5">5s</span> · 
-      <span style="cursor:pointer;color:#9bb9f0;margin:0 4px;" id="preset30">30s</span> · 
-      <span style="cursor:pointer;color:#9bb9f0;margin:0 4px;" id="preset60">60s</span>
+    <div class="sub-label">
+      <span class="preset-click" id="preset5">5s</span> · 
+      <span class="preset-click" id="preset30">30s</span> · 
+      <span class="preset-click" id="preset60">60s</span>
     </div>
   </div>
 
@@ -242,7 +280,7 @@
     <div class="clock-container">
       <canvas id="analogCanvas" width="300" height="300"></canvas>
     </div>
-    <div id="analogLabel" style="font-size:0.8rem; color:#9bb7e6; letter-spacing:1px; margin-top:0.3rem;">● live</div>
+    <div id="analogLabel" style="font-size:0.7rem; color:#9bb7e6; letter-spacing:1px; margin-top:0.1rem;">● live</div>
   </div>
 </div>
 
@@ -478,8 +516,6 @@
     // initial display
     updateTimerDisplay();
     updateStopwatchDisplay();
-
-    // extra: custom input default
     customInput.value = 10;
   })();
 </script>
